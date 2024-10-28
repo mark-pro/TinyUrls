@@ -22,6 +22,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\apis\TinyUrls.Api.Minimal\TinyUrls.Api.Minimal.csproj" />
+      <ProjectReference Include="..\..\libs\TinyUrls.Persistence\TinyUrls.Persistence.csproj" />
+      <ProjectReference Include="..\..\libs\TinyUrls.Prelude\TinyUrls.Prelude.csproj" />
     </ItemGroup>
 
 </Project>

@@ -10,7 +10,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\TinyUrls.Persistence\TinyUrls.Persistence.csproj" />
+      <ProjectReference Include="..\..\libs\TinyUrls.Persistence\TinyUrls.Persistence.csproj" />
+      <ProjectReference Include="..\..\libs\TinyUrls.Prelude\TinyUrls.Prelude.csproj" />
     </ItemGroup>
 
     <ItemGroup>

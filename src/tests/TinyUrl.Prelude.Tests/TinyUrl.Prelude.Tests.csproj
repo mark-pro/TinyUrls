@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\libs\TinyUrls.Prelude\TinyUrls.Prelude.csproj" />
     <ProjectReference Include="..\..\TinyUrls.Prelude\TinyUrls.Prelude.csproj" />
   </ItemGroup>
 
