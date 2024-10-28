@@ -1,0 +1,16 @@
+### GET request to example server
+PUT https://localhost:7013/
+Content-Type: application/json
+
+{ "uri": "https://www.google.com" }
+
+> {% client.global.set("shortCode", response.body["shortCode"]) %}
+
+###
+
+### GET response from example server
+# @no-redirect
+GET https://localhost:7013/{{shortCode}}
+Content-Type: application/json
+
+###
