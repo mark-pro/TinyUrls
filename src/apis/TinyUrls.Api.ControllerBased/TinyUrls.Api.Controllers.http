@@ -1,5 +1,5 @@
 ### PUT request to create a new short URL
-PUT https://localhost:7013/
+PUT https://localhost:7119/
 Content-Type: application/json
 
 { "uri": "https://www.google.com" }
@@ -10,7 +10,7 @@ Content-Type: application/json
 
 ### Get redirect for the short URL
 # @no-redirect
-GET https://localhost:7013/{{shortCode}}
+GET https://localhost:7119/{{shortCode}}
 Content-Type: application/json
 
 ###

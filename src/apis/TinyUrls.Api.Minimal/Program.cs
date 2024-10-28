@@ -15,12 +15,17 @@ builder.Services
     .Validate(config => config is { MaxLength: > 0 }, "MaxLength must be greater than 0")
     .ValidateOnStart();
 
-builder.Services.AddSingleton<IShortner, Shortner>();
+builder.Services.AddScoped<IShortner, Shortner>();
 builder.Services.AddDbContext<TinyUrlDbContext>(options =>
     options.UseInMemoryDatabase("tiny_db"));
+
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
 app.MapEndpoints();
+
+if (!app.Environment.IsProduction())
+    app.UseSwagger().UseSwaggerUI();
 
 app.Run();
