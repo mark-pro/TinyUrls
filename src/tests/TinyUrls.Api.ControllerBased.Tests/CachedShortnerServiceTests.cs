@@ -13,6 +13,7 @@ public sealed class CachedShortnerServiceTests(ServiceProviderFixture spFixture)
         // Arrange
         var service = ServiceScope.ServiceProvider
             .GetRequiredKeyedService<IShortnerService>("cached_shortner");
+        
         var expected = TinyUrl.Create(ShortCode.FromString("abc123"), new Uri("https://example.com"));
         
         // Act
