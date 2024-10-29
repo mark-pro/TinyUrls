@@ -21,7 +21,7 @@ public sealed class TinyUrlsControllerTests(ServiceProviderFixture spFixture)
                 RequestServices = ServiceScope.ServiceProvider
             },
             ActionDescriptor = new ActionDescriptor(),
-            ModelState = {  },
+            ModelState = { },
             RouteData = new Microsoft.AspNetCore.Routing.RouteData(),
         };
 

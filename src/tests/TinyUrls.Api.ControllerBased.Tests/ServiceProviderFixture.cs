@@ -13,6 +13,10 @@ namespace TinyUrls.Api.ControllerBased;
 
 public sealed class ServiceProviderFixture : IDisposable {
     public IServiceScope ServiceScope { get; }
+
+    private static TinyUrlType[] Data = [
+        TinyUrl.Create(ShortCode.FromString("abc123"), new("https://example.com"))
+    ];
     
     public ServiceProviderFixture() {
         var services = new ServiceCollection();
@@ -23,13 +27,21 @@ public sealed class ServiceProviderFixture : IDisposable {
             config.MaxLength = 7;
             config.Alphabet = new("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
         });
-
+        services.AddKeyedScoped<IDbContext<TinyUrlDbContext>, TestDbContext>("dbcontext", (sp, _) => {
+            var config = sp.GetRequiredService<IOptions<ShortnerConfig>>();
+            var context = new TestDbContext(config);
+            context.TinyUrls.AddRange(Data);
+            context.SaveChanges();
+            return context;
+        });
+        
+        services.AddKeyedScoped<IDbContext<TinyUrlDbContext>, PoisonedTestDbContext>("poisoned_dbcontext");
+        
         services.AddControllers();
         
         services.AddLogging();
         services.AddSingleton<IShortner, Shortner>();
-        services.AddDbContext<TinyUrlDbContext>(options =>
-            options.UseInMemoryDatabase("tiny_db"));
+        
         services.AddDistributedMemoryCache();
         
         services.AddKeyedSingleton<IShortnerService>("mocked_shortner", (_, _) => {
@@ -71,13 +83,37 @@ public sealed class ServiceProviderFixture : IDisposable {
             new DbContextShortnerService(
                 sp.GetRequiredService<IShortner>(),
                 sp.GetRequiredService<IOptions<ShortnerConfig>>(),
-                sp.GetRequiredService<TinyUrlDbContext>(),
+                sp.GetRequiredKeyedService<IDbContext<TinyUrlDbContext>>("dbcontext"),
+                sp.GetRequiredService<ILogger<DbContextShortnerService>>()));
+        
+        services.AddKeyedScoped<IShortnerService>("poisoned_dbcontext_shortner", (sp, _) =>
+            new DbContextShortnerService(
+                sp.GetRequiredService<IShortner>(),
+                sp.GetRequiredService<IOptions<ShortnerConfig>>(),
+                sp.GetRequiredKeyedService<IDbContext<TinyUrlDbContext>>("poisoned_dbcontext"),
                 sp.GetRequiredService<ILogger<DbContextShortnerService>>()));
         
         ServiceScope = services.BuildServiceProvider().CreateScope();
     }
-
+    
     public void Dispose() {
         ServiceScope.Dispose();
+    }
+    
+    private sealed class TestDbContext(IOptions<ShortnerConfig> config) 
+        : TinyUrlDbContext(config, new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase("tiny_db").Options), IDbContext<TestDbContext> { }
+
+    private sealed class PoisonedTestDbContext(IOptions<ShortnerConfig> config)
+        : TinyUrlDbContext(config,
+                new DbContextOptionsBuilder<PoisonedTestDbContext>().UseInMemoryDatabase("poisoned_tiny_db").Options),
+            IDbContext<PoisonedTestDbContext> {
+
+        public override int SaveChanges() {
+            throw new DbUpdateException();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) {
+            throw new DbUpdateException();
+        }
     }
 }

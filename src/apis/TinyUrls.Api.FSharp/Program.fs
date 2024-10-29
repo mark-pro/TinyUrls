@@ -23,10 +23,10 @@ let main args =
     
     let app = builder.Build()
     
-    app.MapGet("/{shortCode}", Func<ShortCode, TinyUrlsContext, IResult Task>(
+    app.MapGet("/{shortCode}", Func<ShortCodeType, TinyUrlsContext, IResult Task>(
         fun shortCode context ->
             task {
-                let! result = context.TinyUrls.FindAsync(shortCode)
+                let! result = context.TinyUrls.FirstOrDefaultAsync(fun tiny -> tiny.ShortCode = shortCode)
                 
                 return match result with
                        | null -> Results.NotFound()

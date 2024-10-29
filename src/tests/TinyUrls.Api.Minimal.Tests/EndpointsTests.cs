@@ -11,7 +11,7 @@ namespace TinyUrls.Api.Minimal.Tests;
 
 public class EndpointsTests(ServiceProviderFixture serviceProviderFixture
 ) : IClassFixture<ServiceProviderFixture>{
-    
+
     private IServiceScope ServiceScope =>
         serviceProviderFixture.ServiceScope;
     

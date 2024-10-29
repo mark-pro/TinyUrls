@@ -10,10 +10,10 @@ public record ShortnerConfig : IShortnerConfig {
     public required HashSet<char> Alphabet { get; set; }
 };
 
-public sealed class TinyUrlDbContext(IOptions<ShortnerConfig> config,
-    DbContextOptions options) : DbContext(options) {
+public class TinyUrlDbContext(IOptions<ShortnerConfig> config, DbContextOptions options) 
+    : DbContext(options), IDbContext<TinyUrlDbContext> {
     
-    public DbSet<TinyUrlType> TinyUrls { get; set; }
+    public virtual DbSet<TinyUrlType> TinyUrls { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         var tinyUrl = modelBuilder.Entity<TinyUrlType>();

@@ -22,5 +22,3 @@ let createShortCode (config: IShortnerConfig) (url: Uri) =
         | 0us -> acc
         | _ -> create (alphabet.[Random.Shared.Next(alphabet.Length)] |> string |> (+) acc) (idx - 1us)
     TinyUrl.Create(ShortCode.FromString (create "" config.MaxLength), url)
-
-
