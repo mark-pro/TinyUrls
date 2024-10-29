@@ -1,0 +1,15 @@
+### PUT request to create a new short URL
+PUT https://localhost:7259/
+Content-Type: application/json
+
+{ "uri": "https://www.google.com" }
+
+> {% client.global.set("shortCode", response.body["shortCode"]) %}
+
+###
+
+### Get redirect for the short URL
+# @no-redirect
+GET https://localhost:7259/{{shortCode}}
+
+###

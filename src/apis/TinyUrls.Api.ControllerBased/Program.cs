@@ -26,7 +26,7 @@ builder.Services.Configure<DistributedCacheEntryOptions>(config => {
 
 builder.Services.AddScoped<IShortner, Shortner>();
 
-builder.Services.AddDbContext<TinyUrlDbContext>(options =>
+builder.Services.AddDbContext<IDbContext<TinyUrlDbContext>, TinyUrlDbContext>(options =>
     options.UseInMemoryDatabase("tiny_db"));
 
 builder.Services.AddDistributedMemoryCache();

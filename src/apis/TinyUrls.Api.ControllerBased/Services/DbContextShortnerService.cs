@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using TinyUrls.Persistence;
 using TinyUrls.Prelude.Shortner;

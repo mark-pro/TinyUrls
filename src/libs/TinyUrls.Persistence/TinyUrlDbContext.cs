@@ -10,7 +10,7 @@ public record ShortnerConfig : IShortnerConfig {
     public required HashSet<char> Alphabet { get; set; }
 };
 
-public class TinyUrlDbContext(IOptions<ShortnerConfig> config, DbContextOptions options) 
+public class TinyUrlDbContext(DbContextOptions options) 
     : DbContext(options), IDbContext<TinyUrlDbContext> {
     
     public virtual DbSet<TinyUrlType> TinyUrls { get; set; }
@@ -19,8 +19,7 @@ public class TinyUrlDbContext(IOptions<ShortnerConfig> config, DbContextOptions 
         var tinyUrl = modelBuilder.Entity<TinyUrlType>();
         tinyUrl.HasKey(t => t.ShortCode);
         tinyUrl.Property(t => t.ShortCode)
-            .HasConversion(t => t.ToString(), s => ShortCode.FromString(s))
-            .HasMaxLength(config.Value.MaxLength);
+            .HasConversion(t => t.ToString(), s => ShortCode.FromString(s));
         tinyUrl.Property(t => t.Uri)
             .HasConversion(uri => uri.ToString(), s => new Uri(s));
     }

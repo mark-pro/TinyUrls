@@ -27,9 +27,8 @@ public sealed class ServiceProviderFixture : IDisposable {
             config.MaxLength = 7;
             config.Alphabet = new("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
         });
-        services.AddKeyedScoped<IDbContext<TinyUrlDbContext>, TestDbContext>("dbcontext", (sp, _) => {
-            var config = sp.GetRequiredService<IOptions<ShortnerConfig>>();
-            var context = new TestDbContext(config);
+        services.AddKeyedScoped<IDbContext<TinyUrlDbContext>, TestDbContext>("dbcontext", (_, _) => {
+            var context = new TestDbContext();
             context.TinyUrls.AddRange(Data);
             context.SaveChanges();
             return context;
@@ -100,12 +99,11 @@ public sealed class ServiceProviderFixture : IDisposable {
         ServiceScope.Dispose();
     }
     
-    private sealed class TestDbContext(IOptions<ShortnerConfig> config) 
-        : TinyUrlDbContext(config, new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase("tiny_db").Options), IDbContext<TestDbContext> { }
+    private sealed class TestDbContext() 
+        : TinyUrlDbContext(new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase("tiny_db").Options), IDbContext<TestDbContext> { }
 
-    private sealed class PoisonedTestDbContext(IOptions<ShortnerConfig> config)
-        : TinyUrlDbContext(config,
-                new DbContextOptionsBuilder<PoisonedTestDbContext>().UseInMemoryDatabase("poisoned_tiny_db").Options),
+    private sealed class PoisonedTestDbContext()
+        : TinyUrlDbContext(new DbContextOptionsBuilder<PoisonedTestDbContext>().UseInMemoryDatabase("poisoned_tiny_db").Options),
             IDbContext<PoisonedTestDbContext> {
 
         public override int SaveChanges() {
